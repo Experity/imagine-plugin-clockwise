@@ -6,25 +6,26 @@ var page = webPage.create(),
     resource = system.args[1],
     fileName = system.args[2],
     width = system.args[3] || 1920,
-    height = system.args[4] || 1080;
+    height = system.args[4] || 1080,
+    pageLoadWait = system.args[5] || 250;
 
 page.viewportSize = {width: width, height: height };
 
 var waitFor = function(testFx, onReady, timeOutMillis) {
-  var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3000, //< Default Max Timout is 3s
+  var maxtimeOutMillis = timeOutMillis || 3000,
     start = new Date().getTime(),
     condition = false,
     interval = setInterval(function() {
       if ( (new Date().getTime() - start < maxtimeOutMillis) && !condition ) {
         // If not time-out yet and condition not yet fulfilled
-        condition = (typeof(testFx) === "string" ? eval(testFx) : testFx()); //< defensive code
+        condition = testFx();
       } else {
         if(!condition) {
           // If condition still not fulfilled (timeout but condition is 'false')
           phantom.exit(1);
         } else {
           // Condition fulfilled (timeout and/or condition is 'true')
-          typeof(onReady) === "string" ? eval(onReady) : onReady(); //< Do what it's supposed to do once the condition is fulfilled
+          onReady(); //< Do what it's supposed to do once the condition is fulfilled
           clearInterval(interval); //< Stop this interval
         }
       }
@@ -45,8 +46,10 @@ var checkForLoaders = function(){
 }
 
 var onReady = function(){
-  page.render(fileName);
-  phantom.exit();
+  setTimeout(function() {
+    page.render(fileName);
+    phantom.exit();
+  }, pageLoadWait);
 }
 
 page.open(base64.decode(resource), function (status){
