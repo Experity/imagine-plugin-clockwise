@@ -60,6 +60,6 @@ page.open(base64.decode(resource), function (status){
 
   waitFor(function(){
     return page.evaluate(checkForLoaders);
-  }, onReady, 60000);
+  }, onReady, 180000); // timeout after 3 minutes. 60 seconds might not be long enough
 
 });
