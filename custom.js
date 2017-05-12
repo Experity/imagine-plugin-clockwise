@@ -37,7 +37,7 @@ var checkForLoaders = function(){
   if (loaders.length === 0) { return false;}
 
   for (var i = 0; i < loaders.length; i++) {
-    if (loaders[i].style.display !== 'none') {
+    if (loaders[i].offsetParent === null) {
       return false;
     }
   }
