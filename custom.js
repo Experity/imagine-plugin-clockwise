@@ -49,7 +49,7 @@ var onReady = function(){
   setTimeout(function() {
     page.render(fileName);
     phantom.exit();
-  }, pageLoadWait);
+  }, 15000);
 }
 
 page.open(base64.decode(resource), function (status){
