@@ -7,7 +7,7 @@ var page = webPage.create(),
     fileName = system.args[2],
     width = system.args[3] || 1920,
     height = system.args[4] || 1080,
-    pageLoadWait = system.args[5] || 250;
+    pageLoadWait = system.args[5] || 30000;
 
 page.viewportSize = {width: width, height: height };
 
@@ -49,7 +49,7 @@ var onReady = function(){
   setTimeout(function() {
     page.render(fileName);
     phantom.exit();
-  }, 15000);
+  }, pageLoadWait);
 }
 
 page.open(base64.decode(resource), function (status){
