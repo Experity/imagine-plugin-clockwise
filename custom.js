@@ -32,6 +32,7 @@ var waitFor = function(testFx, onReady, timeOutMillis) {
     }, 250); //< repeat check every 250ms
 };
 
+// DEPRECATED
 var checkForLoaders = function(){
   var loaders = document.getElementsByClassName('loader');
   if (loaders.length === 0) { return false;}
@@ -43,14 +44,21 @@ var checkForLoaders = function(){
   }
 
   return true;
-}
+};
 
 var onReady = function(){
   setTimeout(function() {
     page.render(fileName);
     phantom.exit();
   }, pageLoadWait);
-}
+};
+
+page.onCallback = function(data){
+  if (data && data.returnNow === true) {
+    page.render(fileName);
+    phantom.exit();
+  };
+};
 
 page.open(base64.decode(resource), function (status){
   if (status !== 'success') {
@@ -61,5 +69,4 @@ page.open(base64.decode(resource), function (status){
   waitFor(function(){
     return page.evaluate(checkForLoaders);
   }, onReady, 180000); // timeout after 3 minutes. 60 seconds might not be long enough
-
 });
