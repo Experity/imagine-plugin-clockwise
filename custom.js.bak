@@ -1,25 +1,18 @@
 var webPage = require('webpage'),
-    system = require('system'),
-    base64 = require('/src/helpers/base64');
+    system = require('system');
 
 var page = webPage.create(),
-    resource = system.args[1],
-    fileName = system.args[2],
-    width = system.args[3] || 1920,
-    height = system.args[4] || 1080,
-    pageLoadWait = system.args[5] || 30000;
+    resource = '',
+    fileName = system.args[1],
+    width = system.args[2] || 1920,
+    height = system.args[3] || 1080,
+    pageLoadWait = system.args[4] || 30000;
 
 page.viewportSize = {width: width, height: height };
 
-var onReady = function(){
-  setTimeout(function() {
-    page.render(fileName);
-    phantom.exit();
-  }, pageLoadWait);
-};
-
 callbackFn = function(data){
   if (data && data.renderNow) {
+    console.log('Saving to file: ', fileName);
     page.render(fileName);
     phantom.exit();
   };
@@ -32,12 +25,14 @@ openFn = function (status){
 };
 
 page.onNavigationRequested = function(url, type, willNavigate, main) {
+  console.log('navigating to:', url)
   if (url.match(/app.periscopedata.com.shared.+embed=v2/) && !url.match('screenshot=true')){
     url += '&screenshot=true';
     page.onCallback = callbackFn;
+    console.log('should try to open:', url);
     page.open(url, openFn);
   }
 };
 
 page.onCallback = callbackFn;
-page.open(base64.decode(resource), openFn);
+page.open(resource, openFn);
